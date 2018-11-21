@@ -1,0 +1,12 @@
+fail_fast: false
+repos:
+- repo: git://github.com/antonbabenko/pre-commit-terraform
+  rev: v1.7.3
+  hooks:
+    - id: terraform_fmt
+    - id: terraform_docs
+
+-   repo: https://github.com/pre-commit/mirrors-pylint
+    rev: v2.1.1  # Use the sha / tag you want to point at
+    hooks:
+    -   id: pylint
