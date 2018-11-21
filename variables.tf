@@ -1,5 +1,6 @@
 variable "name" {
-  default = "terminator"
+  description = "Name of lambda function"
+  default     = "terminator"
 }
 
 variable "run_on_regions" {
