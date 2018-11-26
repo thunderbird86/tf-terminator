@@ -43,5 +43,6 @@ class Instance(AWSResource):
         return True
 
     def destroy(self):
+        # This block code removed until all test will be completed
         pass
-        # self._instance.terminate()
+
