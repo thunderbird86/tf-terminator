@@ -14,7 +14,7 @@ class Instance(AWSResource):
     """
 
     def __init__(self, client, instance):
-        super(self.__class__, self).__init__(client, instance)
+        super().__init__(client, instance)
 
     def get_id(self):
         return self._instance.instance_id
@@ -29,10 +29,8 @@ class Instance(AWSResource):
         result = ""
         for t_key, t_value in [(t['Key'], t['Value']) for t in self.get_tags()]:
             if t_key == "Name":
-                result = t_value
-                break
-            else:
-                result = self._instance.instance_id
+                return t_value
+            return self._instance.instance_id
         return result
 
     def start(self):
@@ -44,4 +42,5 @@ class Instance(AWSResource):
         return True
 
     def destroy(self):
-        self._instance.terminate()
+        pass
+        # self._instance.terminate()
