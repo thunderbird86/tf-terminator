@@ -5,17 +5,16 @@ This module contain main class for management AWS resources
 
 """
 
-from __future__ import print_function
-
 import datetime
 import re
 import json
 
 from urllib import request
-from aws import AWS
+from aws import *
 from main import protection_tag
-# Prefix of all tags that are schedulers
 
+
+# Prefix of all tags that are schedulers
 
 class Terminator:
     """
@@ -40,30 +39,31 @@ class Terminator:
         # Going through provided AWS regions
         try:
             if run_on_regions == []:
-                run_on_regions = AWS.get_all_regions()
-
-            for region in run_on_regions:
-                print("\nWorking on region \"{0}\":".format(region))
-
-                for i_type, i_list in AWS.get_instances_in_region(region).items():
-                    print(" Checking {0} resources:".format(i_type))
-
-                    for instance in i_list:
-                        if instance.get_status() == "terminated":
-                            continue
-                        else:
-                            if dry_run is True:
-                                print("     Dry run detected")
-                                self.build_victims_list(instance)
-                            else:
-                                print("     Perform actions")
-                                self.perform_action(instance)
-
-                    self.send_notification(dry_run, region)
-
-
+                run_on_regions = get_all_regions()
         except Exception as e:
             print(e)
+
+        for region in run_on_regions:
+            print("\nWorking on region \"{0}\":".format(region))
+
+            for i_type, i_list in get_instances_in_region(region).items():
+                print(" Checking {0} resources:".format(i_type))
+
+                for instance in i_list:
+                    if instance.get_status() == "terminated":
+                        continue
+                    else:
+                        if dry_run is True:
+                            print("     Dry run detected")
+                            try:
+                                self.build_victims_list(instance)
+                            except Exception as e:
+                                print(e)
+                        else:
+                            print("     Perform actions")
+                            self.perform_action(instance)
+
+                self.send_notification(dry_run, region)
 
     def process_instance(self, instance):
         """
@@ -72,7 +72,6 @@ class Terminator:
         print("     Instance \"{0}\" state is \"{1}\"".format(instance.get_id(), instance.get_status()))
 
         date_template = re.compile(r"^\s*(3[01]|[12][0-9]|0?[1-9])\-(1[012]|0?[1-9])\-((?:19|20)\d{2})\s*$")
-        bool_template = re.compile("^[T-t][R-r][U-u][E-e]")
         result = ""
 
         for t_key, t_value in [(t['Key'], t['Value']) for t in instance.get_tags()]:
@@ -80,7 +79,7 @@ class Terminator:
             # print("     Compare is {0} - {1}".format(t_key, t_value))
 
             if t_key == protection_tag:
-                if bool_template.match(t_value):
+                if t_value.lower() == 'true':
                     print("     Will be destroyed")
                     result = "skip"
 
@@ -109,28 +108,30 @@ class Terminator:
         :return:
         """
 
-        i = self.process_instance(instance)
+        action = self.process_instance(instance)
 
-        if i == "skip":
+        if action == "skip":
             self.white_list.append(instance.get_name())
-        elif i == "schedule":
+        elif action == "schedule":
             self.scheduler_list.append(instance.get_name())
-        elif i == "destroy":
+        elif action == "destroy":
             self.destroy_list.append(instance.get_name())
 
     def send_notification(self, dry_run, region):
         """
         Send notification to slack
+        :param dry_run:
         :param region:
         :return:
         """
 
         if dry_run:
-            text = '!!TEST!! \
-                    \n`For region {0}` \
-                    \n`Connor family` {1}, \
-                    \n`I\'ll be back` {2}, \
-                    \n`You can run, but you can\'t hide ` {3}'.format(region, self.white_list, self.scheduler_list, self.destroy_list)
+            text = '''!!TEST!! 
+                    \n`For region {0}` 
+                    \n`Connor family` {1}, 
+                    \n`I\'ll be back` {2}, 
+                    \n`You can run, but you can\'t hide ` {3}'''.format(region, self.white_list, self.scheduler_list,
+                                                                        self.destroy_list)
         else:
             text = "`I'll be back`"
 
@@ -150,11 +151,11 @@ class Terminator:
 
     def perform_action(self, instance):
 
-        i = self.process_instance(instance)
+        action = self.process_instance(instance)
 
-        if i == "skip":
+        if action == "skip":
             pass
-        elif i == "schedule":
+        elif action == "schedule":
             instance.stop()
-        elif i == "destroy":
+        elif action == "destroy":
             instance.destroy()
