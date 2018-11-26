@@ -6,7 +6,7 @@ repos:
     - id: terraform_fmt
     - id: terraform_docs
 
--   repo: https://github.com/pre-commit/mirrors-pylint
-    rev: v2.1.1  # Use the sha / tag you want to point at
-    hooks:
-    -   id: pylint
+      #- repo: https://github.com/pre-commit/mirrors-pylint
+      #  rev: v2.1.1  # Use the sha / tag you want to point at
+      #  hooks:
+      #  -   id: pylint
