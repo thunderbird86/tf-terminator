@@ -37,12 +37,20 @@ data "aws_iam_policy_document" "policy" {
   }
 }
 
-resource "aws_lambda_permission" "this" {
+resource "aws_lambda_permission" "dry_run" {
   statement_id  = "AllowExecutionFromCloudWatch"
   action        = "lambda:InvokeFunction"
   function_name = "${aws_lambda_function.this.function_name}"
   principal     = "events.amazonaws.com"
-  source_arn    = "${aws_cloudwatch_event_rule.this.arn}"
+  source_arn    = "${aws_cloudwatch_event_rule.dry_run.arn}"
+}
+
+resource "aws_lambda_permission" "perfom_action" {
+  statement_id  = "AllowExecutionFromCloudWatch"
+  action        = "lambda:InvokeFunction"
+  function_name = "${aws_lambda_function.this.function_name}"
+  principal     = "events.amazonaws.com"
+  source_arn    = "${aws_cloudwatch_event_rule.perfom_action.arn}"
 }
 
 resource "aws_iam_policy" "this" {

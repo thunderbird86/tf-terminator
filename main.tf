@@ -3,7 +3,7 @@ resource "aws_lambda_function" "this" {
   description      = "Terminate resources based on tags."
   role             = "${aws_iam_role.this.arn}"
   handler          = "terminator.lambda_handler"
-  runtime          = "python3.7"
+  runtime          = "python3.6"
   memory_size      = "128"
   timeout          = "240"
   filename         = "${data.archive_file.this.output_path}"

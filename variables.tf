@@ -9,8 +9,14 @@ variable "run_on_regions" {
   default     = [""]
 }
 
-variable "scheduler_interval" {
+variable "dry_run_scheduler_interval" {
   description = "The interval of execution of the scheduler."
   type        = "string"
-  default     = "rate(5 minutes)"
+  default     = "cron(0 17 * * ? *)"
+}
+
+variable "perfom_action_scheduler_interval" {
+  description = "The interval of execution of the scheduler."
+  type        = "string"
+  default     = "cron(0 21 * * ? *)"
 }
