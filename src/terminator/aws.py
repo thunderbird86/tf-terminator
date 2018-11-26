@@ -10,25 +10,21 @@ import boto3
 from ec2 import Instance
 
 
-class AWS:
+def get_all_regions():
     """
-    Provide information about AWS account
+    Returns a list of available AWS regions
     """
-    @staticmethod
-    def get_all_regions():
-        """
-        Returns a list of available AWS regions
-        """
-        return [x['RegionName'] for x in boto3.client('ec2').describe_regions()['Regions']]
+    return [x['RegionName'] for x in boto3.client('ec2').describe_regions()['Regions']]
 
-    @staticmethod
-    def get_instances_in_region(region):
-        """
-        Returns a list of all the type of instances, and their instances, managed
-        by the scheduler
-        """
-        ec2 = boto3.resource('ec2', region_name=region)
 
-        return {
-            'EC2': [Instance(ec2, i) for i in ec2.instances.all()],
-        }
+def get_instances_in_region(region):
+    """
+    Returns a list of all the type of instances, and their instances, managed
+    by the scheduler
+    :return:
+    """
+    ec2 = boto3.resource('ec2', region_name=region)
+
+    return {
+        'EC2': [Instance(ec2, i) for i in ec2.instances.all()],
+    }
