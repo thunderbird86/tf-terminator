@@ -124,18 +124,23 @@ class Terminator:
         :param region:
         :return:
         """
-
+        msg = "!!*TEST*!!\n"
         if dry_run:
-            text = '''!!TEST!! 
-                    \n`For region {0}` 
-                    \n`Connor family` {1}, 
-                    \n`I\'ll be back` {2}, 
-                    \n`You can run, but you can\'t hide ` {3}'''.format(region, self.white_list, self.scheduler_list,
-                                                                        self.destroy_list)
+            msg += "`For region {0}`".format(region)
+            msg += "\n`Connor family:`"
+            for resource in self.white_list:
+                msg += "\n - {}".format(resource)
+            msg += "\n`I\'ll be back:`"
+            for resource in self.scheduler_list:
+                msg += "\n - {}".format(resource)
+            msg += "\n`You can run, but you can\'t hide:`"
+            for resource in self.destroy_list:
+                msg += "\n - {}".format(resource)
+
         else:
             text = "`I'll be back`"
 
-        print(text)
+        print(msg)
         exit(0)
 
         post = {"text": "{0}".format(text)}
