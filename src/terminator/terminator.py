@@ -140,10 +140,8 @@ class Terminator:
         else:
             text = "`I'll be back`"
 
-        print(msg)
-        exit(0)
 
-        post = {"text": "{0}".format(text)}
+        post = {"text": "{0}".format(msg)}
 
         try:
             json_data = json.dumps(post)
