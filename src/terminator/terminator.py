@@ -138,7 +138,7 @@ class Terminator:
                 msg += "\n - {}".format(resource)
 
         else:
-            text = "`I'll be back`"
+            msg += "`I'll be back`"
 
 
         post = {"text": "{0}".format(msg)}
