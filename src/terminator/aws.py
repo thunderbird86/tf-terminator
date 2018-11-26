@@ -26,5 +26,5 @@ def get_instances_in_region(region):
     ec2 = boto3.resource('ec2', region_name=region)
 
     return {
-        'EC2': [Instance(ec2, instance) for instance in ec2.instances.all()],
+        'EC2': [Instance(ec2, resource) for resource in ec2.instances.all()],
     }
