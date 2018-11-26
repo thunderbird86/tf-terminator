@@ -29,8 +29,9 @@ class Instance(AWSResource):
         result = ""
         for t_key, t_value in [(t['Key'], t['Value']) for t in self.get_tags()]:
             if t_key == "Name":
-                return t_value
-            return self._instance.instance_id
+                result = t_value
+                break
+            result = self._instance.instance_id
         return result
 
     def start(self):
