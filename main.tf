@@ -10,12 +10,6 @@ resource "aws_lambda_function" "this" {
   source_code_hash = "${data.archive_file.this.output_base64sha256}"
   tags             = "${local.tags}"
 
-  environment {
-    variables {
-      RUN_ON_REGIONS = "${join(",", var.run_on_regions)}"
-    }
-  }
-
   depends_on = ["data.archive_file.this"]
 }
 
