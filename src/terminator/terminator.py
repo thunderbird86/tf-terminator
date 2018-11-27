@@ -164,7 +164,7 @@ class Terminator:
 
 def lambda_handler(event, context):
     """ AWS Lambda entry point """
-    run_on_regions = filter(None, os.environ.get('RUN_ON_REGIONS', "").split(','))
+    run_on_regions = event['run_on_regions']
     dry_run = bool(event['dry_run'])
     Terminator(run_on_regions, dry_run)
 
