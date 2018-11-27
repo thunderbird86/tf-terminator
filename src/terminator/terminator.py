@@ -1,17 +1,17 @@
 # -*- coding: utf-8 -*-
 """
-
 This module contain main class for management AWS resources
-
 """
 
 import datetime
 import re
 import json
+import os
 
 from urllib import request
 from aws import *
-from main import protection_tag
+
+protection_tag = "Terminator_omit"
 
 
 # Prefix of all tags that are schedulers
@@ -21,7 +21,6 @@ class Terminator:
     Main class for this lambda
 
     """
-
     current_date = datetime.datetime.now()
 
     destroy_list = []
@@ -140,7 +139,6 @@ class Terminator:
         else:
             msg += "`I'll be back`"
 
-
         post = {"text": "{0}".format(msg)}
 
         try:
@@ -162,3 +160,19 @@ class Terminator:
             instance.stop()
         elif action == "destroy":
             instance.destroy()
+
+
+def lambda_handler(event, context):
+    """ AWS Lambda entry point """
+    run_on_regions = filter(None, os.environ.get('RUN_ON_REGIONS', "").split(','))
+    dry_run = bool(event['dry_run'])
+    Terminator(run_on_regions, dry_run)
+
+
+if __name__ == '__main__':
+    """ Console entry point """
+    print("Execution from Command Line\n")
+
+    run_on_regions = filter(None, os.environ.get('RUN_ON_REGIONS', "").split(','))
+    dry_run = bool(os.environ.get('DRY_RUN'))
+    Terminator(run_on_regions, dry_run)
