@@ -78,9 +78,10 @@ class Terminator:
             # print("     Compare is {0} - {1}".format(t_key, t_value))
 
             if t_key == protection_tag:
+
                 if t_value.lower() == 'true':
                     print("     Will be destroyed")
-                    result = "skip"
+                    return "skip"
 
                 elif date_template.match(t_value):
 
@@ -88,17 +89,15 @@ class Terminator:
 
                     if self.current_date > protection_date:
                         print("     Date missed, destroy {0}".format(instance.get_id()))
-                        result = "destroy"
+                        return "destroy"
 
                     else:
                         print("     Do not destroy instance {0}, until {1}".format(instance.get_id(), t_value))
-                        result = "schedule"
+                        return "schedule"
                 else:
-                    result = "destroy"
-            else:
-                result = "destroy"
+                    return "destroy"
 
-        return result
+        return "destroy"
 
     def build_victims_list(self, instance):
         """
@@ -123,7 +122,7 @@ class Terminator:
         :param region:
         :return:
         """
-        msg = "!!*TEST*!!\n"
+        msg = ""
         if dry_run:
             msg += "`For region {0}`".format(region)
             msg += "\n`Connor family:`"
