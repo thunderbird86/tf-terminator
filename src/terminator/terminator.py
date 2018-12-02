@@ -34,6 +34,7 @@ class Terminator:
 
         print("Running Terminator")
         print("Protection tag is {0}".format(protection_tag))
+        print("Dry run is {0}".format(dry_run))
 
         # Going through provided AWS regions
         try:
@@ -52,17 +53,19 @@ class Terminator:
                     if instance.get_status() == "terminated":
                         continue
                     else:
-                        if dry_run is True:
-                            print("     Dry run detected")
+                        if dry_run == "True":
                             try:
                                 self.build_victims_list(instance)
                             except Exception as e:
                                 print(e)
                         else:
-                            print("     Perform actions")
-                            self.perform_action(instance)
+                            print("Perform actions")
+                            try:
+                                self.perform_action(instance)
+                            except Exception as e:
+                                print(e)
 
-                self.send_notification(dry_run, region)
+                # self.send_notification(dry_run, region)
 
     def process_instance(self, instance):
         """
@@ -164,7 +167,7 @@ class Terminator:
 def lambda_handler(event, context):
     """ AWS Lambda entry point """
     run_on_regions = event['run_on_regions']
-    dry_run = bool(event['dry_run'])
+    dry_run = event['dry_run']
     Terminator(run_on_regions, dry_run)
 
 
