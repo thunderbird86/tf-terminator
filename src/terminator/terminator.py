@@ -52,13 +52,12 @@ class Terminator:
                     if instance.get_status() == "terminated":
                         continue
                     else:
-                        if dry_run == "True":
+                        if dry_run.lower() == "true":
                             try:
                                 self.build_victims_list(instance)
                             except Exception as e:
                                 print(e)
                         else:
-                            print("Perform actions")
                             try:
                                 self.perform_action(instance)
                             except Exception as e:
@@ -121,8 +120,9 @@ class Terminator:
         :param region:
         :return:
         """
+
         msg = ""
-        if dry_run:
+        if dry_run.lower == "true":
             msg += "`For region {0}`".format(region)
             msg += "\n`Connor family:`"
             for resource in self.white_list:
@@ -133,7 +133,6 @@ class Terminator:
             msg += "\n`You can run, but you can\'t hide:`"
             for resource in self.destroy_list:
                 msg += "\n - {}".format(resource)
-
         else:
             msg += "`I'll be back`"
 
@@ -151,6 +150,8 @@ class Terminator:
     def perform_action(self, instance):
 
         action = self.process_instance(instance)
+
+        print("Perform action - {}:".format(action))
 
         if action == "skip":
             pass
@@ -172,5 +173,5 @@ if __name__ == '__main__':
     print("Execution from Command Line\n")
 
     run_on_regions = filter(None, os.environ.get('RUN_ON_REGIONS', "").split(','))
-    dry_run = bool(os.environ.get('DRY_RUN'))
+    dry_run = os.environ.get('DRY_RUN')
     Terminator(run_on_regions, dry_run)
