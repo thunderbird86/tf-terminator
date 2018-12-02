@@ -13,7 +13,6 @@ from aws import *
 
 protection_tag = "Terminator_omit"
 
-
 # Prefix of all tags that are schedulers
 
 class Terminator:
@@ -65,7 +64,7 @@ class Terminator:
                             except Exception as e:
                                 print(e)
 
-                # self.send_notification(dry_run, region)
+                self.send_notification(dry_run, region)
 
     def process_instance(self, instance):
         """
@@ -76,8 +75,6 @@ class Terminator:
         date_template = re.compile(r"^\s*(3[01]|[12][0-9]|0?[1-9])\-(1[012]|0?[1-9])\-((?:19|20)\d{2})\s*$")
 
         for t_key, t_value in [(t['Key'], t['Value']) for t in instance.get_tags()]:
-            # Extract the information in the Key
-            # print("     Compare is {0} - {1}".format(t_key, t_value))
 
             if t_key == protection_tag:
 
