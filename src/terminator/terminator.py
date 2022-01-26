@@ -78,7 +78,7 @@ class Terminator:
             if t_key == protection_tag:
 
                 if t_value.lower() == 'true':
-                    print("     Will be destroyed")
+                    print("Will be destroyed")
                     return "skip"
 
                 elif date_template.match(t_value):
